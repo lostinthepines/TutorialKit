@@ -12,8 +12,9 @@ TutorialKit is a library for creating interactive step by step tutorials.  Highl
 
 **Simple example:**
 
-- Add a tutorial sequence:
+- Add a tutorial sequence (the same one used in the gif above)
 ```Objective-C
+    // Set up in the AppDelegate (but could be anywhere really)
     NSValue *msgPoint = [NSValue valueWithCGPoint:
                          CGPointMake(self.window.bounds.size.width * 0.5,
                                      self.window.bounds.size.height * 0.65)];
@@ -81,7 +82,7 @@ it simply add the following line to your Podfile:
 
 ## Author
 
-Alex Peterson, alex.c.peterson@gmail.com
+Alex Peterson, alex@inthepin.es 
 
 ## License
 
