@@ -12,7 +12,7 @@ TutorialKit is a library for creating interactive step by step tutorials.  Highl
 
 **Simple example:**
 
-1. Add a tutorial sequence:
+- Add a tutorial sequence:
 ```Objective-C
     NSValue *msgPoint = [NSValue valueWithCGPoint:
                          CGPointMake(self.window.bounds.size.width * 0.5,
@@ -50,12 +50,12 @@ TutorialKit is a library for creating interactive step by step tutorials.  Highl
     [TutorialKit addTutorialSequence:steps name:@"example"];
 ```
 
-2. At any point in the application where you want to advance the tutorial:
+- At any point in the application where you want to advance the tutorial:
 ```Objective-C
     [TutorialKit advanceTutorialSequenceWithName:@"example"];
 ```
 
-3. Profit.
+- Profit.
 
 **You can also configure the TutorialKit default styles.**
 ```Objective-C
