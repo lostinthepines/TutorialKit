@@ -47,7 +47,6 @@
  */
 
 #import "TutorialKitView.h"
-#import "UIViewController+TutorialKit.h"
 #import "TutorialKit.h"
 #import <QuartzCore/QuartzCore.h>
 #import <Accelerate/Accelerate.h>

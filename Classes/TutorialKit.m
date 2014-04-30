@@ -24,7 +24,6 @@
  */
 
 #import "TutorialKit.h"
-#import "UIViewController+TutorialKit.h"
 #import "UIView+Recursion.h"
 #import "TutorialKitView.h"
 
@@ -43,6 +42,8 @@
 @end
 
 @implementation TutorialKit
+
+#pragma mark - Public
 
 ////////////////////////////////////////////////////////////////////////////////
 + (void)addTutorialSequence:(NSArray *)sequence name:(NSString*)name
@@ -198,11 +199,16 @@
         view.frame = window.bounds;
         [view setNeedsLayout];
         
-        // fade in
-        view.alpha = 0;
-        [UIView animateWithDuration:0.5 animations:^{
-            view.alpha = 1;
-        } completion:nil];
+        if(animate) {
+            // fade in
+            view.alpha = 0;
+            [UIView animateWithDuration:0.5 animations:^{
+                view.alpha = 1;
+            } completion:nil];
+        }
+        else {
+            view.alpha = 1.;
+        }
     }
 }
 
