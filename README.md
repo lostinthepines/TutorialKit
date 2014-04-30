@@ -10,10 +10,10 @@ TutorialKit is a library for creating interactive step by step tutorials.  Highl
 
 ## Usage
 
-Simple example:
+**Simple example:**
 
 1. Add a tutorial sequence:
-```objective-c
+```Objective-C
     NSValue *msgPoint = [NSValue valueWithCGPoint:
                          CGPointMake(self.window.bounds.size.width * 0.5,
                                      self.window.bounds.size.height * 0.65)];
@@ -51,22 +51,22 @@ Simple example:
 ```
 
 2. At any point in the application where you want to advance the tutorial:
-```objective-c
+```Objective-C
     [TutorialKit advanceTutorialSequenceWithName:@"example"];
 ```
 
 3. Profit.
 
-You can also configure the TutorialKit default styles.
-```objective-c
+**You can also configure the TutorialKit default styles.**
+```Objective-C
     [TutorialKit setDefaultBlurAmount:0.5];
     [TutorialKit setDefaultMessageColor:UIColor.grayColor];
     [TutorialKit setDefaultMessageFont:[UIFont fontWithName:@"Helvetica" size:20]];
     [TutorialKit setDefaultTintColor:[UIColor colorWithWhite:1.0 alpha:0.5]];
 ``` 
 
-At any time you can set the tutorial step (useful if you want to start over)
-```objective-c
+**At any time you can set the tutorial step (useful if you want to start over)**
+```Objective-C
     [TutorialKit setCurrentStep:0 forTutorial:@"example"];
 ```
 
