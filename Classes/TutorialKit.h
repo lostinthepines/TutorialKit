@@ -29,13 +29,17 @@ static NSString* const TKBlurAmount = @"TKBlurAmount";
 static NSString* const TKMessage = @"TKMessage";
 static NSString* const TKMessageColor = @"TKMessageColor";
 static NSString* const TKMessageFont = @"TKMessageFont";
-static NSString* const TKMessagePoint = @"TKMessagePoint";
+static NSString* const TKMessagePoint = @"TKMessagePoint"; // absolute 0..width, 0..height
+static NSString* const TKMessageRelativePoint = @"TKMessageRelativePoint"; // relative 0..1, 0..1
 static NSString* const TKHighlightView = @"TKHighlightView";
 static NSString* const TKHighlightViewTag = @"TKHighlightViewTag";
-static NSString* const TKHighlightPoint = @"TKHighlightPoint";
+static NSString* const TKHighlightPoint = @"TKHighlightPoint"; // absolute 0..width, 0..height
+static NSString* const TKHighlightRelativePoint = @"TKHighlightRelativePoint";  // relative 0..1
 static NSString* const TKHighlightRadius = @"TKHighlightRadius";
 static NSString* const TKSwipeGestureStartPoint = @"TKSwipeGestureStartPoint";
+static NSString* const TKSwipeGestureRelativeStartPoint = @"TKSwipeGestureRelativeStartPoint";
 static NSString* const TKSwipeGestureEndPoint = @"TKSwipeGestureEndPoint";
+static NSString* const TKSwipeGestureRelativeEndPoint = @"TKSwipeGestureRelativeEndPoint";
 static NSString* const TKCompleteCallback = @"TKCompleteCallback";
 
 @interface TutorialKit : NSObject
@@ -55,9 +59,9 @@ static NSString* const TKCompleteCallback = @"TKCompleteCallback";
  // highlight a specific point in a view and display a message
  @{
  TKMessage:@"second message",
- TKMessagePoint:[NSValue valueWithCGPoint:CGPointMake(100,100)],
+ TKMessageRelativePoint:[NSValue valueWithCGPoint:CGPointMake(0.5,0.75)],
  TKHighlightViewTag:1,
- TKHighlightPoint:[NSValue valueWithCGPoint:CGPointMake(200,200)],
+ TKHighlightRelativePoint:[NSValue valueWithCGPoint:CGPointMake(0.5,0.5)],
  TKHighlightRadius:@(100)
  TKCompleteCallback:^{ NSLog("Sequence complete!"); }
  },

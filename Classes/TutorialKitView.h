@@ -28,18 +28,23 @@
 
 + (instancetype) tutorialViewWithMessage:(NSString *)message
                            messageCenter:(CGPoint)messageCenter
+                    messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
                            highlightView:(UIView *)view
                           highlightPoint:(CGPoint)point
+                  highlightPointRelative:(BOOL)relativeHighlightPoint
                          highlightRadius:(float)radius;
+
 
 + (instancetype) tutorialViewWithMessage:(NSString *)message
                            messageCenter:(CGPoint)messageCenter
+                   messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
                        swipeGestureStart:(CGPoint)start
                          swipeGestureEnd:(CGPoint)end
+                   swipePositionsRelative:(BOOL)relativeSwipePositions
                          highlightRadius:(float)radius;
 
 + (instancetype) tutorialViewWithDictionary:(NSDictionary *)values;

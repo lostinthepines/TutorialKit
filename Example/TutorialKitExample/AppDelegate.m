@@ -19,33 +19,30 @@
     self.window.rootViewController = [[ExampleViewController alloc] init];
     
     NSValue *msgPoint = [NSValue valueWithCGPoint:
-                         CGPointMake(self.window.bounds.size.width * 0.5,
-                                     self.window.bounds.size.height * 0.65)];
+                         CGPointMake(0.5,0.7)];
     NSValue *swipeStart = [NSValue valueWithCGPoint:
-                           CGPointMake(self.window.bounds.size.width * 0.75,
-                                       self.window.bounds.size.height * 0.75)];
+                           CGPointMake(0.75,0.8)];
     NSValue *swipeEnd = [NSValue valueWithCGPoint:
-                           CGPointMake(self.window.bounds.size.width * 0.25,
-                                       self.window.bounds.size.height * 0.75)];
+                           CGPointMake(0.25,0.8)];
     // set up a simple 3 step tutorial
     NSArray *steps = @[
                        // Step 0
                        @{
                            TKHighlightViewTag: @(1001),
                            TKMessage: @"First, press this button.",
-                           TKMessagePoint: msgPoint
+                           TKMessageRelativePoint: msgPoint
                            },
                        // Step 1
                        @{
-                           TKSwipeGestureStartPoint: swipeStart,
-                           TKSwipeGestureEndPoint: swipeEnd,
+                           TKSwipeGestureRelativeStartPoint: swipeStart,
+                           TKSwipeGestureRelativeEndPoint: swipeEnd,
                            TKMessage: @"Next, swipe left.",
-                           TKMessagePoint: msgPoint
+                           TKMessageRelativePoint: msgPoint
                            },
                        // Step 2
                        @{
                            TKMessage: @"That's it! Yer all done!",
-                           TKMessagePoint: msgPoint,
+                           TKMessageRelativePoint: msgPoint,
                            TKCompleteCallback: ^{ NSLog(@"ALL DONE."); }
                            },
                        ];

@@ -9,6 +9,10 @@
 #import "ExampleViewController.h"
 #import "TutorialKit.h"
 
+@interface ExampleViewController()
+@property (nonatomic, weak) UIButton *nextButton;
+@property (nonatomic, weak) UIButton *startButton;
+@end
 @implementation ExampleViewController
 
 - (void)viewDidLoad
@@ -17,9 +21,8 @@
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:self.repeatingBackground];
     
-    // a button with - note the unique tag
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.frame = CGRectMake(60,100,200,60);
+    btn.frame = CGRectMake(0, 0, 200.f, 60.f);
     [btn setTitle:@"START" forState:UIControlStateNormal];
     [btn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     [btn setTitleColor:UIColor.blackColor forState:UIControlStateHighlighted];
@@ -27,10 +30,11 @@
     btn.layer.cornerRadius = 15.f;
     [btn addTarget:self action:@selector(start:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
+    self.startButton = btn;
     
     // a reset button
     btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.frame = CGRectMake(60,200,200,60);
+    btn.frame = CGRectMake(0, 0, 200.f, 60.f);
     [btn setTitle:@"NEXT STEP" forState:UIControlStateNormal];
     [btn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     [btn setTitleColor:UIColor.blackColor forState:UIControlStateHighlighted];
@@ -39,6 +43,23 @@
     btn.tag = 1001;
     [btn addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
+    self.nextButton = btn;
+}
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+
+    UIInterfaceOrientation orientation = UIApplication.sharedApplication.statusBarOrientation;
+    CGPoint center = self.view.center;
+    if(orientation == UIInterfaceOrientationLandscapeLeft ||
+       orientation == UIInterfaceOrientationLandscapeRight) {
+        center.x = self.view.center.y;
+        center.y = self.view.center.x;
+    }
+    
+    self.startButton.center = CGPointMake(center.x, center.y * 0.5);
+    self.nextButton.center = CGPointMake(center.x, self.startButton.center.y + 100.f);
 }
 
 - (void)start:(id)sender

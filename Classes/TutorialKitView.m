@@ -136,8 +136,11 @@ extern UIFont *gTutorialLabelFont;
 @property (nonatomic, weak) UILabel *messageLabel;
 @property (nonatomic) CGPoint gestureEnd;
 @property (nonatomic) CGPoint gestureStart;
+@property (nonatomic) BOOL gesturePointsRelative;
 @property (nonatomic) CGPoint messageCenter;
+@property (nonatomic) BOOL messageCenterRelative;
 @property (nonatomic) CGPoint highlightPoint;
+@property (nonatomic) BOOL highlightPointRelative;
 @property (nonatomic) float highlightRadius;
 @property (nonatomic, weak) UIView *highlightView;
 @property (nonatomic, weak) UIView *gestureView;
@@ -152,10 +155,12 @@ extern UIFont *gTutorialLabelFont;
 ////////////////////////////////////////////////////////////////////////////////
 + (instancetype) tutorialViewWithMessage:(NSString *)message
                            messageCenter:(CGPoint)messageCenter
+                   messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
                            highlightView:(UIView *)view
                           highlightPoint:(CGPoint)point
+                  highlightPointRelative:(BOOL)relativeHighlightPoint
                          highlightRadius:(float)radius
 {
     TutorialKitView *tkv = [[TutorialKitView alloc]
@@ -165,9 +170,11 @@ extern UIFont *gTutorialLabelFont;
         if(color) tkv.messageLabel.textColor = color;
         if(font) tkv.messageLabel.font = font;
     }
+    tkv.messageCenterRelative = relativeMessageCenter;
     tkv.messageCenter = messageCenter;
     tkv.highlightView = view;
     tkv.highlightPoint = point;
+    tkv.highlightPointRelative = relativeHighlightPoint;
     tkv.highlightRadius = radius;
     tkv.gestureView.hidden = YES;
     return tkv;
@@ -176,10 +183,12 @@ extern UIFont *gTutorialLabelFont;
 ////////////////////////////////////////////////////////////////////////////////
 + (instancetype) tutorialViewWithMessage:(NSString *)message
                            messageCenter:(CGPoint)messageCenter
+                   messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
                        swipeGestureStart:(CGPoint)start
                          swipeGestureEnd:(CGPoint)end
+                  swipePositionsRelative:(BOOL)relativeSwipePositions
                          highlightRadius:(float)radius
 {
     TutorialKitView *tkv = [[TutorialKitView alloc]
@@ -189,12 +198,15 @@ extern UIFont *gTutorialLabelFont;
         if(color) tkv.messageLabel.textColor = color;
         if(font) tkv.messageLabel.font = font;
     }
+    tkv.gesturePointsRelative = relativeSwipePositions;
     tkv.gestureStart = start;
     tkv.gestureEnd = end;
     tkv.messageCenter = messageCenter;
+    tkv.messageCenterRelative = relativeMessageCenter;
     tkv.highlightPoint = CGPointMake((start.x + end.x) / 2.f, (start.y + end.y) / 2.f);
     tkv.highlightRadius = radius;
     tkv.gestureView.hidden = CGPointEqualToPoint(tkv.gestureStart, tkv.gestureEnd) && CGPointEqualToPoint(tkv.gestureStart, CGPointZero);
+    tkv.gestureView.center = relativeSwipePositions ? [tkv getAbsolutePoint:start] : start;
     [tkv animateGesture];
     return tkv;
 }
@@ -204,13 +216,23 @@ extern UIFont *gTutorialLabelFont;
 {
     // display this tutorial and advance
     CGPoint msgPoint = CGPointZero;
+    BOOL msgPointRelative = NO;
     if([values objectForKey:TKMessagePoint]) {
         msgPoint = [[values objectForKey:TKMessagePoint] CGPointValue];
     }
+    else if([values objectForKey:TKMessageRelativePoint]) {
+        msgPoint = [[values objectForKey:TKMessageRelativePoint] CGPointValue];
+        msgPointRelative = YES;
+    }
     
     CGPoint highlightPoint = CGPointZero;
+    BOOL highlightPointRelative = NO;
     if([values objectForKey:TKHighlightPoint]) {
         highlightPoint = [[values objectForKey:TKHighlightPoint] CGPointValue];
+    }
+    else if([values objectForKey:TKHighlightRelativePoint]) {
+        highlightPoint = [[values objectForKey:TKHighlightRelativePoint] CGPointValue];
+        highlightPointRelative = YES;
     }
     
     CGFloat radius = 0.0f;
@@ -222,29 +244,43 @@ extern UIFont *gTutorialLabelFont;
     if([values objectForKey:TKHighlightView]) {
         tkv = [TutorialKitView tutorialViewWithMessage:[values objectForKey:TKMessage]
                                          messageCenter:msgPoint
+                                 messageCenterRelative:msgPointRelative
                                                   font:[values objectForKey:TKMessageFont]
                                                  color:[values objectForKey:TKMessageColor]
                                           highlightView:[values objectForKey:TKHighlightView]
                                          highlightPoint:highlightPoint
+                                highlightPointRelative:highlightPointRelative
                                         highlightRadius:radius];
     }
     else {
         CGPoint swipeStart = CGPointZero;
+        BOOL swipePointsRelative = NO;
         if([values objectForKey:TKSwipeGestureStartPoint]) {
             swipeStart = [[values objectForKey:TKSwipeGestureStartPoint] CGPointValue];
+        }
+        else if([values objectForKey:TKSwipeGestureRelativeStartPoint]) {
+            swipeStart = [[values objectForKey:TKSwipeGestureRelativeStartPoint] CGPointValue];
+            swipePointsRelative = YES;
         }
         
         CGPoint swipeEnd = CGPointZero;
         if([values objectForKey:TKSwipeGestureEndPoint]) {
             swipeEnd = [[values objectForKey:TKSwipeGestureEndPoint] CGPointValue];
         }
+        else if([values objectForKey:TKSwipeGestureRelativeEndPoint]) {
+            swipeEnd = [[values objectForKey:TKSwipeGestureRelativeEndPoint] CGPointValue];
+            swipePointsRelative = YES;
+        }
+        
         
         tkv = [TutorialKitView tutorialViewWithMessage:[values objectForKey:TKMessage]
                                          messageCenter:msgPoint
+                                 messageCenterRelative:msgPointRelative
                                                   font:[values objectForKey:TKMessageFont]
                                                  color:[values objectForKey:TKMessageColor]
                                      swipeGestureStart:swipeStart
                                        swipeGestureEnd:swipeEnd
+                                swipePositionsRelative:swipePointsRelative
                                        highlightRadius:radius];
     }
     
@@ -276,7 +312,7 @@ extern UIFont *gTutorialLabelFont;
         self.sequenceName = nil;
         self.sequenceStep = 0;
         
-        self.tintColor = [UIColor colorWithWhite:1.0 alpha:0.64];
+        self.tintColor = [UIColor colorWithWhite:1.0 alpha:0.5];
 
         self.updating = NO;
         
@@ -310,13 +346,30 @@ extern UIFont *gTutorialLabelFont;
         
         self.userInteractionEnabled = YES;
         self.exclusiveTouch = NO;
+        
+        // listen for orientation changes
+        [NSNotificationCenter.defaultCenter
+         addObserver:self
+         selector:@selector(onApplicationDidChangeStatusBarOrientationNotification)
+         name:UIApplicationDidChangeStatusBarOrientationNotification
+         object:nil];
     }
     return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+- (void)dealloc
+{
+    [NSNotificationCenter.defaultCenter
+     removeObserver:self
+     name:UIApplicationDidChangeStatusBarOrientationNotification
+     object:nil];
+}
+
+////////////////////////////////////////////////////////////////////////////////
 - (void)layoutSubviews
 {
+    [self updateRotation];
     [super layoutSubviews];
     
     if(self.messageLabel && self.messageLabel.text) {
@@ -327,7 +380,8 @@ extern UIFont *gTutorialLabelFont;
             self.messageLabel.frame = CGRectMake(0,0,fit.width,fit.height);
             self.messageLabel.textAlignment = NSTextAlignmentCenter;
         }
-        self.messageLabel.center = self.messageCenter;
+        
+        self.messageLabel.center = self.messageCenterRelative ? [self getAbsolutePoint:self.messageCenter] : self.messageCenter;
         
         // prevent aliasing
         CGRect messageFrame = self.messageLabel.frame;
@@ -335,6 +389,8 @@ extern UIFont *gTutorialLabelFont;
         messageFrame.origin.y = floor(messageFrame.origin.y);
         self.messageLabel.frame = messageFrame;
     }
+    
+    self.blurView.frame = self.bounds;
     
     [self updateAsynchronously:YES completion:nil];
 }
@@ -367,11 +423,15 @@ extern UIFont *gTutorialLabelFont;
         CGGradientRef gradient = CGGradientCreateWithColors(colorSpace,
                                                             colors,
                                                             locations);
+        CGPoint highlightPoint = self.highlightPointRelative ?
+            [self getAbsolutePoint:self.highlightPoint] :
+            self.highlightPoint;
+        
         CGContextDrawRadialGradient(context,
                                     gradient,
-                                    self.highlightPoint,
+                                    highlightPoint,
                                     0,
-                                    self.highlightPoint,
+                                    highlightPoint,
                                     MAX(10,self.highlightRadius),
                                     kCGGradientDrawsAfterEndLocation);
         
@@ -404,6 +464,7 @@ extern UIFont *gTutorialLabelFont;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     // pass through and dismiss!
+    self.gestureView.hidden = YES;
     [TutorialKit dismissCurrentTutorialView];
     return nil;
 }
@@ -433,6 +494,22 @@ extern UIFont *gTutorialLabelFont;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+- (void)onApplicationDidChangeStatusBarOrientationNotification
+{
+    if(self.alpha <= 0.f) return;
+    
+    [UIView animateWithDuration:0.25 animations:^{
+        self.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self updateRotation];
+        [self setNeedsLayout];
+        [UIView animateWithDuration:0.5 animations:^{
+            self.alpha = 1.0;
+        }];
+    }];
+}
+
+////////////////////////////////////////////////////////////////////////////////
 - (void)setBlurAmount:(CGFloat)blurAmount
 {
     _blurAmount = blurAmount;
@@ -445,8 +522,7 @@ extern UIFont *gTutorialLabelFont;
 {
     __strong CALayer *blurLayer = self.layer;
     __strong CALayer *underlyingLayer = self.superview.layer;
-    CGRect bounds = [blurLayer convertRect:blurLayer.bounds
-                                   toLayer:underlyingLayer];
+    CGRect bounds = blurLayer.bounds;
     
     CGFloat scale = 0.5;
     if (self.blurIterations) {
@@ -468,12 +544,30 @@ extern UIFont *gTutorialLabelFont;
         //prevents pixelation on old devices
         scale = 1.0f;
     }
+    
+    UIInterfaceOrientation orientation = UIApplication.sharedApplication.statusBarOrientation;
+    
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    if(orientation == UIInterfaceOrientationLandscapeLeft) {
+        transform = CGAffineTransformRotate(transform, M_PI / 2.f);
+        transform = CGAffineTransformTranslate(transform, 0, -size.width);
+    } else if(orientation == UIInterfaceOrientationLandscapeRight) {
+        transform = CGAffineTransformRotate(transform, -M_PI / 2.f);
+        transform = CGAffineTransformTranslate(transform, -size.height, 0);
+    }
+    else if(orientation == UIInterfaceOrientationPortraitUpsideDown) {
+        transform = CGAffineTransformRotate(transform, M_PI);
+        transform = CGAffineTransformTranslate(transform, -size.width, -size.height);
+    }
+
     UIGraphicsBeginImageContextWithOptions(size, YES, scale);
+
     CGContextRef context = UIGraphicsGetCurrentContext();
     if(!context) return nil;
-    CGContextTranslateCTM(context, -bounds.origin.x, -bounds.origin.y);
+    CGContextConcatCTM(context, transform);
     
     NSArray *hiddenViews = [self prepareUnderlyingViewForSnapshot];
+
     [underlyingLayer renderInContext:context];
     for (CALayer *layer in hiddenViews) {
         layer.hidden = NO;
@@ -490,12 +584,13 @@ extern UIFont *gTutorialLabelFont;
 {
     if(self.gestureView.hidden) return;
     
-    self.gestureView.center = self.gestureStart;
+    self.gestureView.center = self.gesturePointsRelative ? [self getAbsolutePoint:self.gestureStart] : self.gestureStart;
+    NSLog(@"Gesture Start %f %f ",self.gestureView.center.x, self.gestureView.center.y);
     [UIView animateWithDuration:kTKGestureAnimationDuration/3.f animations:^{
         self.gestureView.alpha = 1.0;
     } completion:^(BOOL finished) {
         [UIView animateWithDuration:kTKGestureAnimationDuration/3.f animations:^{
-            self.gestureView.center = self.gestureEnd;
+            self.gestureView.center = self.gesturePointsRelative ? [self getAbsolutePoint:self.gestureEnd] : self.gestureEnd;
         } completion:^(BOOL finished) {
             [UIView animateWithDuration:kTKGestureAnimationDuration/3.f animations:^{
                 self.gestureView.alpha = 0;
@@ -531,6 +626,26 @@ extern UIFont *gTutorialLabelFont;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+- (CGPoint)getAbsolutePoint:(CGPoint)relative
+{
+    UIInterfaceOrientation orientation = UIApplication.sharedApplication.statusBarOrientation;
+    CGSize size = self.bounds.size;
+
+    // swap dimensions if bounds are not updated yet
+    if((orientation == UIInterfaceOrientationLandscapeLeft ||
+       orientation == UIInterfaceOrientationLandscapeRight) &&
+       size.height > size.width) {
+        CGFloat tmp = size.width;
+        size.width = size.height;
+        size.height = tmp;
+    }
+    
+    return CGPointMake(MAX(0.f,MIN(1.f,relative.x)) * size.width,
+                       MAX(0.f,MIN(1.f,relative.y)) * size.height
+                       );
+}
+
+////////////////////////////////////////////////////////////////////////////////
 - (void)updateAsynchronously:(BOOL)async completion:(void (^)())completion
 {
     if (self.blurAmount > 0.0 && !self.updating) {
@@ -549,6 +664,33 @@ extern UIFont *gTutorialLabelFont;
     }
     else if (completion) {
         completion();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+- (void)updateRotation
+{
+    UIInterfaceOrientation orientation = UIApplication.sharedApplication.statusBarOrientation;
+    CGFloat angle = 0.f;
+    BOOL swap = orientation == UIInterfaceOrientationLandscapeLeft ||
+                orientation == UIInterfaceOrientationLandscapeRight;
+    switch (orientation) {
+        default:
+        case UIInterfaceOrientationPortrait: angle = 0.f; break;
+        case UIInterfaceOrientationPortraitUpsideDown: angle = M_PI; break;
+        case UIInterfaceOrientationLandscapeLeft: angle = -M_PI/2.f; break;
+        case UIInterfaceOrientationLandscapeRight: angle = M_PI/2.f; break;
+    }
+    self.transform = CGAffineTransformMakeRotation(angle);
+    
+    if(swap) {
+        self.bounds = CGRectMake(0,
+                                0,
+                                self.superview.frame.size.height,
+                                self.superview.frame.size.width);
+    }
+    else {
+        self.frame = self.superview.frame;
     }
 }
 
