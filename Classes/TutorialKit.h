@@ -74,7 +74,7 @@ static NSString* const TKCompleteCallback = @"TKCompleteCallback";
  */
 + (void)addTutorialSequence:(NSArray *)sequence name:(NSString*)name;
 
-/** Advance the tutorial sequence is possible and continue if possible
+/** Advance the tutorial sequence is possible and does not auto-continue
  
  @param name The name of the tutorial sequence to advance
  @return Returns TRUE if the tutorial sequence advanced
@@ -90,14 +90,27 @@ static NSString* const TKCompleteCallback = @"TKCompleteCallback";
 + (BOOL)advanceTutorialSequenceWithName:(NSString *)name
                             andContinue:(BOOL)shouldContinue;
 
-/** Advance the tutorial sequence is possible and only if on this step and
- continue if possible.
+/** Advance the tutorial sequence is possible and only if on this step and does
+ not auto-continue.
  
  @param name The name of the tutorial sequence to advance
  @param step Only advance if the tutorial is on this step
  @return Returns TRUE if the tutorial sequence advanced
  */
-+ (BOOL)advanceTutorialSequenceWithName:(NSString *)name ifOnStep:(NSInteger)step;
++ (BOOL)advanceTutorialSequenceWithName:(NSString *)name
+                               ifOnStep:(NSInteger)step;
+
+/** Advance the tutorial sequence is possible and only if on this step and
+ continue if requested.
+ 
+ @param name The name of the tutorial sequence to advance
+ @param step Only advance if the tutorial is on this step
+ @param shouldContinue True if should continue to next tutorial step if possible
+ @return Returns TRUE if the tutorial sequence advanced
+ */
++ (BOOL)advanceTutorialSequenceWithName:(NSString *)name
+                               ifOnStep:(NSInteger)step
+                            andContinue:(BOOL)shouldContinue;
 
 /** Current step for the specified tutorial
  

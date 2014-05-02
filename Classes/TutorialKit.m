@@ -155,11 +155,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 + (BOOL)advanceTutorialSequenceWithName:(NSString *)name ifOnStep:(NSInteger)step
 {
+    return [TutorialKit advanceTutorialSequenceWithName:name
+                                               ifOnStep:step
+                                            andContinue:NO];
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (BOOL)advanceTutorialSequenceWithName:(NSString *)name
+                               ifOnStep:(NSInteger)step
+                            andContinue:(BOOL)shouldContinue
+{
     if([TutorialKit currentStepForTutorialWithName:name] != step) {
         return NO;
     }
     
-    return [TutorialKit advanceTutorialSequenceWithName:name andContinue:YES];
+    return [TutorialKit advanceTutorialSequenceWithName:name andContinue:shouldContinue];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
