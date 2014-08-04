@@ -585,7 +585,6 @@ extern UIFont *gTutorialLabelFont;
     if(self.gestureView.hidden) return;
     
     self.gestureView.center = self.gesturePointsRelative ? [self getAbsolutePoint:self.gestureStart] : self.gestureStart;
-    NSLog(@"Gesture Start %f %f ",self.gestureView.center.x, self.gestureView.center.y);
     [UIView animateWithDuration:kTKGestureAnimationDuration/3.f animations:^{
         self.gestureView.alpha = 1.0;
     } completion:^(BOOL finished) {

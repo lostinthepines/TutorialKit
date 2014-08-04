@@ -48,15 +48,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 + (void)addTutorialSequence:(NSArray *)sequence name:(NSString*)name
 {
-    // check NSUserDefaults for a stored tutorial step
-    NSInteger step = 0;
-    if([NSUserDefaults.standardUserDefaults objectForKey:TKUserDefaultsKey]) {
-        NSMutableDictionary *steps = [NSUserDefaults.standardUserDefaults objectForKey:TKUserDefaultsKey];
-        if([steps objectForKey:name]) {
-            step = [[steps objectForKey:name] integerValue];
-        }
-    }
-    
+    NSInteger step = [TutorialKit currentStepForTutorialWithName:name];;
     [TutorialKit.sharedInstance.sequences setObject:@{TKSequence:sequence,TKStep:@(step)} forKey:name];
 }
 
@@ -180,8 +172,19 @@
         NSNumber *step = [sequence objectForKey:TKStep];
         if(step) return step.integerValue;
     }
+    else {
+        // check NSUserDefaults for a stored tutorial step
+        NSInteger step = 0;
+        if([NSUserDefaults.standardUserDefaults objectForKey:TKUserDefaultsKey]) {
+            NSMutableDictionary *steps = [NSUserDefaults.standardUserDefaults objectForKey:TKUserDefaultsKey];
+            if([steps objectForKey:name]) {
+                step = [[steps objectForKey:name] integerValue];
+            }
+        }
+        return step;
+    }
     
-    return -1;
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -197,6 +200,41 @@
         [TutorialKit.sharedInstance
          dismissTutorialView:TutorialKit.sharedInstance.currentTutorialView];
     }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
++ (void)insertTutorialSequence:(NSArray *)sequence name:(NSString*)name afterStep:(NSInteger)step
+{
+    [TutorialKit insertTutorialSequence:sequence name:name beforeStep:step + 1];
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (void)insertTutorialSequence:(NSArray *)sequence name:(NSString*)name beforeStep:(NSInteger)step
+{
+    NSDictionary *existingSequence = [TutorialKit.sharedInstance.sequences objectForKey:name];
+    if(!existingSequence) {
+        // @TODO Error message?
+        return;
+    }
+    
+    NSInteger curStep = [TutorialKit currentStepForTutorialWithName:name];
+    NSArray *steps = existingSequence[TKSequence];
+    if(step >= steps.count) {
+        steps = [steps arrayByAddingObjectsFromArray:sequence];
+    }
+    else if(step > 0) {
+        NSMutableArray *newSequence = @[].mutableCopy;
+        [newSequence addObjectsFromArray:[steps subarrayWithRange:NSMakeRange(0, step)]];
+        [newSequence addObjectsFromArray:sequence];
+        [newSequence addObjectsFromArray:[steps subarrayWithRange:NSMakeRange(step, steps.count - step)]];
+        steps = newSequence;
+    }
+    else {
+        steps = [sequence arrayByAddingObjectsFromArray:steps];
+    }
+    
+    [TutorialKit.sharedInstance.sequences setObject:@{TKSequence:steps,TKStep:@(curStep)} forKey:name];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -49,6 +49,16 @@
     
     [TutorialKit addTutorialSequence:steps name:@"example"];
     
+    // insert an extra step
+    NSArray *moreSteps = @[
+                           @{
+                               TKHighlightViewTag: @(1001),
+                               TKMessage: @"Please press this button again.",
+                               TKMessageRelativePoint: msgPoint
+                               },
+                           ];
+    [TutorialKit insertTutorialSequence:moreSteps name:@"example" beforeStep:2];
+    
     // some optional defaults
     [TutorialKit setDefaultBlurAmount:0.5];
     [TutorialKit setDefaultMessageColor:UIColor.grayColor];

@@ -130,6 +130,22 @@ static NSString* const TKCompleteCallback = @"TKCompleteCallback";
  */
 + (void)dismissCurrentTutorialView;
 
+/** Inserts a tutorial sequence into the existince sequence
+ @param array of tutorial sequence dictionaries
+ @param name The name of this tutorial sequence
+ @param name The name of this tutorial sequence
+ @param step The step to after which to insert this sequence
+ */
++ (void)insertTutorialSequence:(NSArray *)sequence name:(NSString*)name afterStep:(NSInteger)step;
+
+/** Inserts a tutorial sequence into the existince sequence
+ @param array of tutorial sequence dictionaries
+ @param name The name of this tutorial sequence
+ @param name The name of this tutorial sequence
+ @param step The step to before which to insert this sequence
+ */
++ (void)insertTutorialSequence:(NSArray *)sequence name:(NSString*)name beforeStep:(NSInteger)step;
+
 /** Set the current step for the specified tutorial
  
  @param step The current step for the specified tutorial sequence
