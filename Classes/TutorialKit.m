@@ -397,6 +397,8 @@
             
             if(tagView) *stop = YES;
         }];
+        
+        if(tagView) break;
     }
     
     return tagView;
