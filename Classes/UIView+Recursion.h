@@ -27,11 +27,11 @@
 @interface UIView (Recursion)
 
 /** Find a UIView recursively.  Return TRUE from the block to recurse into subview.
- Set stop to TRUE to stop recursing and return the subview.
+ Set stop to TRUE to stop recursing and return the subview. You can also create your own Subview Detection inside the block and set the customReturnView pointer to let the method return your custom view instead of the current subview on which the block is executed.
 
  @param recurse The block to use to determine whether to continue recursing
  @return Returns the UIView if found or nil
  */
-- (UIView*)findViewRecursively:(BOOL(^)(UIView* subview, BOOL* stop))recurse;
+- (UIView*)findViewRecursively:(BOOL(^)(UIView* subview, BOOL* stop, UIView** customReturnView))recurse;
 
 @end
