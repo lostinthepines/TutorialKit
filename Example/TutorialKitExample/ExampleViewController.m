@@ -23,7 +23,7 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:self.repeatingBackground];
     
     BOOL displayToolbar = YES;
-    UIBarButtonItem *theItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(nextStep:)];
+    UIBarButtonItem *theItem = [[UIBarButtonItem alloc] initWithTitle:@"Bar Button" style:UIBarButtonItemStyleBordered target:self action:@selector(nextStep:)];
     theItem.tag = 1001;
     
     if (displayToolbar) {
