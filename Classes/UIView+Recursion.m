@@ -28,18 +28,23 @@
 @implementation UIView (Recursion)
 
 ////////////////////////////////////////////////////////////////////////////////
-- (UIView*)findViewRecursively:(BOOL(^)(UIView* subview, BOOL* stop))recurse
+- (UIView*)findViewRecursively:(BOOL(^)(UIView* subview, BOOL* stop, UIView** customReturnView))recurse
 {
     for( UIView* subview in self.subviews ) {
         BOOL stop = NO;
-        if( recurse( subview, &stop ) ) {
+        UIView *customReturnView;
+        if( recurse( subview, &stop, &customReturnView) ) {
             UIView *view = [subview findViewRecursively:recurse];
             if(view) return view;
         } else if( stop ) {
+            if (customReturnView) {
+                return customReturnView;//prefer the custom view because it'll only be non nil when its needed
+            }
             return subview;
         }
     }
     return nil;
 }
+
 
 @end

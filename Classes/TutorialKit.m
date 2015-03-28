@@ -385,7 +385,57 @@
         [window.subviews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger idx, BOOL *stop) {
             if(view.hidden || view.alpha == 0) return;
             
-            tagView = [view findViewRecursively:^BOOL(UIView *subview, BOOL *stop) {
+            tagView = [view findViewRecursively:^BOOL(UIView *subview, BOOL *stop,UIView** customReturnView) {
+                if ([subview isKindOfClass:[UIToolbar class]]) {
+                    __weak UIToolbar *toolbar = (UIToolbar*)subview;//we do not want to retain it here
+                    for (UIBarButtonItem *toolBarItem in [toolbar items]) {
+                        if (toolBarItem.tag == tag.integerValue) {
+                            @try {//we need the try block here because valueForKey may throw an exception if the private 'view' Variable is renamed in future iOS Versions, this is highly unlikely though.
+                                UIView *toolbarView = [toolBarItem valueForKey:@"view"];
+                                if (toolbarView && customReturnView != NULL) {//make super sure it worked, and make sure we don't a NULL Pointer Dereference
+                                    *stop = YES;
+                                    *customReturnView = toolbarView;
+                                    return NO;
+                                }
+                            }
+                            @catch (NSException *exception) {
+                                return NO;//we did found the needed ToolbarItem but since we can't access the View we do not need to recurse further.
+                            }
+                        }
+                    }
+                }
+                if ([subview isKindOfClass:[UINavigationBar class]]) {
+                    __weak UINavigationBar *navBar = (UINavigationBar*)subview;// do not retain it here
+                    for (UINavigationItem *navItem in [navBar items]) {
+                        UIBarButtonItem *foundBarButtomItem = nil;
+                        for (UIBarButtonItem *theItem in [navItem leftBarButtonItems]) {
+                            if (theItem.tag == tag.integerValue) {
+                                foundBarButtomItem = theItem;
+                            }
+                        }
+                        for (UIBarButtonItem *theItem in [navItem rightBarButtonItems]) {
+                            if (theItem.tag == tag.integerValue) {
+                                foundBarButtomItem = theItem;
+                            }
+                        }
+                        if (foundBarButtomItem) {//we found a matching item
+                            @try {//we need the try block here because valueForKey may throw an exception if the private 'view' Variable is renamed in future iOS Versions, this is highly unlikely though.
+                                UIView *navBarItemView = [foundBarButtomItem valueForKey:@"view"];
+                                if (navBarItemView && customReturnView != NULL) {//make super sure it worked, and make sure we don't a NULL Pointer Dereference
+                                    
+                                    *stop = YES;
+                                    *customReturnView = navBarItemView;
+                                    foundBarButtomItem = nil; //nil out the pointer
+                                    return NO;
+                                }
+                            }
+                            @catch (NSException *exception) {
+                                return NO;//we did found the needed ToolbarItem but since we can't access the View we do not need to recurse further.
+                            }
+                        }
+                    }
+                    
+                }
                 if(subview.tag == tag.integerValue && !subview.hidden &&
                    subview.alpha != 0) {
                     *stop = YES;
@@ -394,6 +444,7 @@
                 // return yes if should recurse further
                 return !subview.hidden && subview.alpha != 0;
             }];
+
             
             if(tagView) *stop = YES;
         }];

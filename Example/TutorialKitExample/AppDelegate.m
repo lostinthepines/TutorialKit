@@ -52,8 +52,8 @@
     // insert an extra step
     NSArray *moreSteps = @[
                            @{
-                               TKHighlightViewTag: @(1001),
-                               TKMessage: @"Please press this button again.",
+                               TKHighlightViewTag: @(1002),
+                               TKMessage: @"Please press this button to finish.",
                                TKMessageRelativePoint: msgPoint
                                },
                            ];
